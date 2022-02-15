@@ -2,7 +2,7 @@ import './App.css';
 import TodoTemplate from "./components/TodoTemplate";
 import TodoInsert from "./components/TodoInsert";
 import TodoList from "./components/TodoList";
-import {useCallback, useRef, useState} from "react";
+import {useCallback, useReducer, useRef, useState} from "react";
 
 function BulkTodos() {
   const range = len => Array.from(Array(len).keys());
@@ -11,28 +11,40 @@ function BulkTodos() {
     , []);
 }
 
+function todoReducer(todos, action) {
+  switch (action.type) {
+    case 'INSERT':
+      return [...todos, action.todo];
+    case 'REMOVE':
+      return todos.filter(todo => todo.id !== action.id)
+    case 'TOGGLE':
+      return todos.map(todo => (todo.id === action.id) ? {...todo, checked: !todo.checked} : todo)
+    default:
+      return todos;
+  }
+}
+
 const App = () => {
 
-  const [todos, setTodos] = useState(BulkTodos);
-
   const nextId = useRef(4);
-
+  const [todos, dispatch] = useReducer(todoReducer, undefined, BulkTodos);
   const onInsert = useCallback(text => {
-      const todo = {
-        id: nextId.current,
-        text: text,
-        checked: false,
-      }
-      setTodos(todos => [...todos, todo]);
-      nextId.current++;
-    }, [todos],
-  );
+    const todo = {
+      id: nextId.current,
+      text: text,
+      checked: false,
+    };
+    dispatch({type: 'INSERT', todo});
+    nextId.current++;
+  }, []);
+
   const onRemove = useCallback(id => {
-    setTodos(todos => todos.filter(todo => todo.id !== id))
-  }, [todos],);
+    dispatch({type: 'REMOVE', id});
+  }, []);
+
   const onToggle = useCallback(id => {
-    setTodos(todos => todos.map(todo => (todo.id === id) ? {...todo, checked: !todo.checked} : todo));
-  }, [todos],);
+    dispatch({type: 'TOGGLE', id});
+  }, []);
 
   return (
     <TodoTemplate>
@@ -44,3 +56,27 @@ const App = () => {
 
 
 export default App;
+
+
+//To optimize performance with functional method,
+
+/*
+const [todos, setTodos] = useState(BulkTodos);
+const onInsert = useCallback(text => {
+    const todo = {
+      id: nextId.current,
+      text: text,
+      checked: false,
+    }
+    setTodos(todos => [...todos, todo]);
+    nextId.current++;
+  }, [todos],
+);
+
+const onRemove = useCallback(id => {
+  setTodos(todos => todos.filter(todo => todo.id !== id))
+}, [todos],);
+
+const onToggle = useCallback(id => {
+  setTodos(todos => todos.map(todo => (todo.id === id) ? {...todo, checked: !todo.checked} : todo));
+}, [todos],);*/
