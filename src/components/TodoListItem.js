@@ -1,6 +1,7 @@
 import './TodoListItem.scss'
 import cn from 'classnames'
 import {MdCheckBox, MdCheckBoxOutlineBlank, MdRemoveCircleOutline} from "react-icons/md";
+import React from "react";
 
 const TodoListItem = ({todo, onRemove, onToggle}) => {
   const {id, text, checked} = todo;
@@ -17,4 +18,4 @@ const TodoListItem = ({todo, onRemove, onToggle}) => {
   );
 };
 
-export default TodoListItem;
+export default React.memo(TodoListItem);

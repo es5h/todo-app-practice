@@ -4,18 +4,16 @@ import TodoInsert from "./components/TodoInsert";
 import TodoList from "./components/TodoList";
 import {useCallback, useRef, useState} from "react";
 
+function BulkTodos() {
+  const range = len => Array.from(Array(len).keys());
+  return range(2500).reduce((acc, cur) =>
+      [...acc, {id: cur, text: `todo ${cur}`, checked: false,}]
+    , []);
+}
+
 const App = () => {
-  const [todos, setTodos] = useState([
-    {
-      id: 1, text: 'first', checked: true
-    },
-    {
-      id: 2, text: 'second', checked: true
-    },
-    {
-      id: 3, text: 'third', checked: false
-    }
-  ]);
+
+  const [todos, setTodos] = useState(BulkTodos);
 
   const nextId = useRef(4);
 
@@ -25,15 +23,15 @@ const App = () => {
         text: text,
         checked: false,
       }
-      setTodos([...todos, todo]);
+      setTodos(todos => [...todos, todo]);
       nextId.current++;
     }, [todos],
   );
   const onRemove = useCallback(id => {
-    setTodos(todos.filter(todo => todo.id !== id))
+    setTodos(todos => todos.filter(todo => todo.id !== id))
   }, [todos],);
-  const onToggle = useCallback( id => {
-    setTodos(todos.map(todo => (todo.id === id)? {...todo, checked : !todo.checked} : todo));
+  const onToggle = useCallback(id => {
+    setTodos(todos => todos.map(todo => (todo.id === id) ? {...todo, checked: !todo.checked} : todo));
   }, [todos],);
 
   return (
