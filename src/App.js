@@ -1,8 +1,15 @@
 import './App.css';
 import TodoTemplate from "./components/TodoTemplate";
+import TodoInsert from "./components/TodoInsert";
+import TodoList from "./components/TodoList";
 
 const App = () => {
-  return <TodoTemplate> I'll make Todo App </TodoTemplate>;
+  return (
+    <TodoTemplate>
+      <TodoInsert/>
+      <TodoList />
+    </TodoTemplate>
+  );
 }
 
 
